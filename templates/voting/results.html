@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary);">Live Turnout & Results</h1>
+    <p style="font-size: 1.1rem; color: #cbd5e1;">A completely transparent and mathematically secure tally of the current standing.</p>
+</div>
+
+<div class="glass-card" style="margin-bottom: 3rem; text-align: center;">
+    <h2>Total Votes Cast: <span style="font-size: 2.5rem; color: var(--primary); display: block; margin-top: 1rem;">{{ total_votes }}</span></h2>
+</div>
+
+<div class="grid">
+    {% for res in results_data %}
+        <div class="glass-card">
+            <h3 style="margin-bottom: 1rem;">{{ res.name }}</h3>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; font-size: 1.5rem;">{{ res.votes }} Votes</span>
+                <span style="color: #94a3b8;">{{ res.percentage|floatformat:1 }}%</span>
+            </div>
+            
+            <!-- Progress bar -->
+            <div style="width: 100%; height: 12px; background: rgba(0,0,0,0.3); border-radius: 6px; overflow: hidden;">
+                <div style="height: 100%; width: {{ res.percentage|floatformat:1 }}%; background: linear-gradient(to right, #8b5cf6, #3b82f6); border-radius: 6px; transition: width 1s ease-out;"></div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

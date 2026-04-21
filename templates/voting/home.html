@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(to right, #8b5cf6, #3b82f6); -webkit-background-clip: text; color: transparent;">Welcome to Secure E-Voting</h1>
+    <p style="font-size: 1.1rem; color: #cbd5e1;">Cast your vote anonymously. Our cryptographic system guarantees 100% privacy and prevents duplicate voting.</p>
+</div>
+
+{% if user.is_authenticated and has_voted %}
+    <div class="glass-card" style="text-align: center; margin-bottom: 3rem; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+        <h2>Thank You!</h2>
+        <p>You have already securely cast your vote in this election.</p>
+        <a href="{% url 'results' %}" class="btn" style="margin-top: 1rem;">View Live Turnout & Results</a>
+    </div>
+{% elif not user.is_authenticated %}
+    <div class="glass-card" style="text-align: center; margin-bottom: 3rem; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+        <h2>Authentication Required</h2>
+        <p>You must be logged in to cast a vote. This guarantees individual participation.</p>
+        <a href="{% url 'login' %}" class="btn" style="margin-top: 1rem;">Login Now</a>
+    </div>
+{% endif %}
+
+<h2>Candidates</h2>
+<div class="grid">
+    {% for candidate in candidates %}
+        <div class="glass-card" style="text-align: center;">
+            <img class="candidate-photo" src="{{ candidate.image_url|default:'https://via.placeholder.com/150/8b5cf6/FFFFFF?text=Candidate' }}" alt="{{ candidate.name }}'s Photo" />
+            <h3 style="margin-bottom: 0.5rem; color: var(--primary);">{{ candidate.name }}</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 2rem; color: #94a3b8;">{{ candidate.platform_description }}</p>
+            
+            {% if user.is_authenticated and not has_voted %}
+                <form action="{% url 'cast_vote' candidate.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">Vote for {{ candidate.name }}</button>
+                </form>
+            {% else %}
+                <button type="button" class="btn" style="background: #475569; cursor: not-allowed;" disabled>Vote</button>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No candidates available at this time.</p>
+    {% endfor %}
+</div>
+{% endblock %}
